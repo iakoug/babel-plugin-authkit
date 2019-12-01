@@ -10,15 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout the repo
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v1
 
       # Update package version and set up git
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v1
       - name: Update package version and setup git
         run: |
-          git config user.name "christian"
-          git config user.email baozaodexianyu@163.com
-          npm version 1.0.$(date +%s)
           npm install
           npm run build
 
@@ -28,15 +25,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Publish to NPM
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v1
         with:
           node-version: 12
           registry-url: 'https://registry.npmjs.org/'
+          scope: 'rollawaypoint'
       - name: Publish to NPM
         run: |
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          npm config list
-          npm publish --access public
+          npm config set https://registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm publish
         env:
           CI: true
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
@@ -46,7 +43,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v1
         with:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
