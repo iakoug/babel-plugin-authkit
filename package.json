@@ -28,8 +28,7 @@
     "babel-plugin"
   ],
   "files": [
-    "lib",
-    "config"
+    "lib"
   ],
   "license": "ISC"
 }

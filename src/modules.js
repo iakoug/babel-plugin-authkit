@@ -1,7 +1,12 @@
-const { packageName } = require('../config/constant')
+const packageJson = require('../package.json')
 
-module.exports = function resolveModule(config, name) {
+module.exports = function resolveModule(config = {}, name) {
   // TODO: Filter specific methods that doesn't exist
+  const { lib } = config
 
-  return `${packageName}/es/src/${name}`
+  if (!lib) {
+    throw new Error(`Plugin ${packageJson.name} lib option is required`)
+  }
+
+  return `${lib}/es/src/${name}`
 }

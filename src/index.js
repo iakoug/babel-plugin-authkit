@@ -1,6 +1,5 @@
 const { addDefault } = require('@babel/helper-module-imports')
 const resolveModule = require('./modules')
-const { packageName } = require('../config/constant')
 
 const SPECIAL_TYPES = ['isMemberExpression', 'isProperty']
 
@@ -56,11 +55,13 @@ module.exports = function({ types }) {
             .forEach(path => path.remove())
         }
       },
-      ImportDeclaration(path) {
-        const { node } = path
+      ImportDeclaration(path, state = { opts: {} }) {
+        const {
+          node: { source, specifiers }
+        } = path
 
-        if (node.source.value === packageName) {
-          node.specifiers.forEach(spec => {
+        if (source.value === state.opts.lib) {
+          specifiers.forEach(spec => {
             if (types.isImportSpecifier(spec)) {
               specified[spec.local.name] = spec.imported.name
 
@@ -75,14 +76,13 @@ module.exports = function({ types }) {
           removablePaths.push(path)
         }
       },
-      ExportNamedDeclaration(path, state) {
+      ExportNamedDeclaration(path, state = { opts: {} }) {
         const { node, hub } = path
-        const { useES } = state.opts
 
-        if (node.source && node.source.value === packageName) {
+        if (node.source && node.source.value === state.opts.lib) {
           const specifiers = node.specifiers.map(spec => {
             const importIdentifier = importMethod(
-              useES,
+              state.opts,
               spec.exported.name,
               hub.file
             )
@@ -96,10 +96,12 @@ module.exports = function({ types }) {
           node.source = null
         }
       },
-      ExportAllDeclaration(path) {
-        const { node } = path
+      ExportAllDeclaration(path, state = { opts: {} }) {
+        const {
+          node: { source }
+        } = path
 
-        if (node.source && node.source.value === packageName) {
+        if (source && source.value === state.opts.lib) {
           throw new Error(
             '`export * from "authkit"` defeats the purpose of babel-plugin-authkit'
           )
@@ -108,12 +110,11 @@ module.exports = function({ types }) {
       CallExpression(path, state) {
         const { node, hub } = path
         const { name } = node.callee
-        const { useES } = state.opts
 
         if (!types.isIdentifier(node.callee)) return
 
         if (matchesKitsMethod(path, name)) {
-          node.callee = importMethod(useES, specified[name], hub.file)
+          node.callee = importMethod(state.opts, specified[name], hub.file)
         }
 
         if (node.arguments) {
@@ -121,7 +122,7 @@ module.exports = function({ types }) {
             const { name } = arg
 
             return matchesKitsMethod(path, name)
-              ? importMethod(useES, specified[name], hub.file)
+              ? importMethod(state.opts, specified[name], hub.file)
               : arg
           })
         }
@@ -129,40 +130,49 @@ module.exports = function({ types }) {
       MemberExpression(path, state) {
         const { node } = path
         const objectName = node.object.name
-        const { useES } = state.opts
 
         if (!matchesKits(path, objectName)) return
 
-        const newNode = importMethod(useES, node.property.name, path.hub.file)
+        const newNode = importMethod(
+          state.opts,
+          node.property.name,
+          path.hub.file
+        )
 
         path.replaceWith({ type: newNode.type, name: newNode.name })
       },
       Property(path, state) {
         const { node, hub } = path
-        const { useES } = state.opts
 
         if (
           types.isIdentifier(node.key) &&
           node.computed &&
           matchesKitsMethod(path, node.key.name)
         ) {
-          node.key = importMethod(useES, specified[node.key.name], hub.file)
+          node.key = importMethod(
+            state.opts,
+            specified[node.key.name],
+            hub.file
+          )
         }
 
         if (
           types.isIdentifier(node.value) &&
           matchesKitsMethod(path, node.value.name)
         ) {
-          node.value = importMethod(useES, specified[node.value.name], hub.file)
+          node.value = importMethod(
+            state.opts,
+            specified[node.value.name],
+            hub.file
+          )
         }
       },
       Identifier(path, state) {
         const { node, hub, parent } = path
-
         const { name } = node
-        const { useES } = state.opts
+
         if (matchesKitsMethod(path, name) && !isSpecialTypes(types, parent)) {
-          const newNode = importMethod(useES, specified[name], hub.file)
+          const newNode = importMethod(state.opts, specified[name], hub.file)
 
           path.replaceWith({ type: newNode.type, name: newNode.name })
         } else if (matchesKits(path, name)) {
