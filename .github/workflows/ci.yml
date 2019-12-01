@@ -21,7 +21,7 @@ jobs:
         run: |
           npm cache clean --force
           echo "" > .npmrc
-          npm version 1.0.$(date +%s)
+          # npm version 1.0.$(date +%s)
           npm install
           npm run build
 
