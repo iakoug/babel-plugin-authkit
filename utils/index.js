@@ -2,15 +2,15 @@
  * 数据类型判断
  * @param {Array<any>} datas
  */
-exports.isArray = (...datas) =>
+const isArray = (...datas) =>
   datas.every(data => Object.prototype.toString.call(data) === '[object Array]')
-exports.isObject = (...datas) =>
+const isObject = (...datas) =>
   datas.every(
     data => Object.prototype.toString.call(data) === '[object Object]'
   )
-exports.isRefType = (...datas) =>
+const isRefType = (...datas) =>
   datas.every(data => isArray(data) || isObject(data))
-exports.isNullPointer = (...datas) =>
+const isNullPointer = (...datas) =>
   datas.every(
     data =>
       ~['[object Undefined]', '[object Null]'].indexOf(
@@ -23,7 +23,7 @@ exports.isNullPointer = (...datas) =>
  * @param {Array | Object} obj
  * @param {Function} fn
  */
-exports.forEach = function(obj, fn) {
+const forEach = (obj, fn) => {
   if (isNullPointer(obj)) return
 
   if (typeof obj !== 'object') obj = [obj]
@@ -37,7 +37,7 @@ exports.forEach = function(obj, fn) {
  * 合并对象
  * @param  {...any} args
  */
-exports.merge = (...args) =>
+const merge = (...args) =>
   args.reduce(
     (result, obj) => (
       forEach(
@@ -51,3 +51,10 @@ exports.merge = (...args) =>
     ),
     {}
   )
+
+exports.forEach = forEach
+exports.merge = merge
+exports.isArray = isArray
+exports.isObject = isObject
+exports.isRefType = isRefType
+exports.isNullPointer = isNullPointer
