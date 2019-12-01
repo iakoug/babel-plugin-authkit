@@ -10,7 +10,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: npm ci
       - run: npm run build
       - run: npm test
 
@@ -23,7 +22,6 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
       - run: |
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm run publish
@@ -40,7 +38,6 @@ jobs:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
           scope: '@rollawaypoint'
-      - run: npm ci
       - run: echo registry=https://npm.pkg.github.com/rollawaypoint >> .npmrc
       - run: npm publish
         env:
