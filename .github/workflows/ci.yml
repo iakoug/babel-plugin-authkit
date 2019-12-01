@@ -14,11 +14,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: npm install and npm test
-        run: npm ci
-        run: npm run test
       - name: npm build
-        run: npm run build
+      - run: |
+          npm install
+          npm run test
+          npm run build
 
   publish-npm:
     needs: build
