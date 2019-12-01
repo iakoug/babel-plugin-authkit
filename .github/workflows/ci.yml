@@ -16,7 +16,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm build
         run: |
-          npm cache clean --force
+          echo "" > .npmrc
           npm install
           npm run test
           npm run build
@@ -31,6 +31,7 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm run publish
         env:
@@ -47,8 +48,8 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@rollawaypoint'
       - run: |
-          echo registry=https://npm.pkg.github.com/rollawaypoint >> .npmrc
-          echo //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN >> .npmrc
+          echo registry=https://npm.pkg.github.com/rollawaypoint > ~/.npmrc
+          echo //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN >> ~/.npmrc
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_AUTH_TOKEN}}
