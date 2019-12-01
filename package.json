@@ -7,6 +7,7 @@
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib",
     "publish": "npm publish || true",
+    "gpr": "node gpr.js",
     "test": "echo \"Error: no test specified\""
   },
   "repository": {
