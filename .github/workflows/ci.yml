@@ -1,4 +1,4 @@
-name: Node.js Package
+name: Publish to NPM and GPR
 
 on: [push]
 
@@ -16,11 +16,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm build
         run: |
-          echo "" > .npmrc
-          npm install
+          npm ci
           npm run test
           npm run build
 
+  # Publish to NPM
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
@@ -32,11 +32,13 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: |
           npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
-          npm run publish
+          npm config list
+          npm publish --access public
         env:
+          CI: true
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
 
+  # Publish to GitHub Package Registry
   publish-gpr:
     needs: build
     runs-on: ubuntu-latest
@@ -47,9 +49,7 @@ jobs:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
           scope: '@rollawaypoint'
-      - run: |
-          npm login --registry=https://npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN --scope=@rollawaypoint
-          echo //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN > ~/.npmrc
-          npm publish
+      - name: Publish to GitHub Package Registry
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_AUTH_TOKEN}}
