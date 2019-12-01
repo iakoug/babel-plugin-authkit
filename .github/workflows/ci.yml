@@ -19,6 +19,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm build
         run: |
+          npm cache clean --force
           echo "" > .npmrc
           npm version 1.0.$(date +%s)
           npm install
