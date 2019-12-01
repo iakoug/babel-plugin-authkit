@@ -1,12 +1,9 @@
 {
   "name": "babel-plugin-authkit",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "rollawaypoint@gmail.com",
   "main": "lib/index.js",
   "description": "A plugin that make `import` on demand.",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib",
     "publish": "npm publish || true",
