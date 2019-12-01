@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-authkit",
-  "version": "1.5.0",
+  "version": "1.0.1575178597",
   "author": "rollawaypoint@gmail.com",
   "main": "lib/index.js",
   "description": "A plugin that make `import` on demand.",
