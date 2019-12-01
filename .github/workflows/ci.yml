@@ -16,7 +16,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm build
         run: |
-          rm package-lock.json
           npm cache clean --force
           npm install
           npm run test
