@@ -53,6 +53,8 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@rollawaypoint'
       - run: |
+          mv package.json temp.json
+          mv package.gpr.json package.json
           echo @rollawaypoint:registry=https://npm.pkg.github.com/ >> .npmrc
       - run: npm publish
         env:
