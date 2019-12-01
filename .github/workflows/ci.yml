@@ -53,8 +53,7 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@rollawaypoint'
       - run: |
-          echo registry=https://npm.pkg.github.com/rollawaypoint > ~/.npmrc
-          echo //npm.pkg.github.com/:_authToken=$NODE_AUTH_TOKEN >> ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_AUTH_TOKEN}}
