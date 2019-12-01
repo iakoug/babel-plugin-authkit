@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  publish-to-npm-and-gpr:
+  build:
     runs-on: ubuntu-latest
     steps:
       # Checkout the repo
@@ -19,7 +19,14 @@ jobs:
           git config user.name "christian"
           git config user.email baozaodexianyu@163.com
           npm version 1.0.$(date +%s)
+          npm install
+          npm run build
 
+  # Publish to NPM
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       # Publish to NPM
       - uses: actions/setup-node@master
         with:
@@ -34,7 +41,11 @@ jobs:
           CI: true
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
 
-      # Publish to GitHub Package Registry
+  # Publish to GitHub Package Registry
+  publish-gpr:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/setup-node@master
         with:
           node-version: 12
