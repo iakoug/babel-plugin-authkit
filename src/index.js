@@ -10,9 +10,9 @@ function isSpecialTypes(types, node) {
 module.exports = function({ types }) {
   let authKit, removablePaths, specified, selectedMethods
 
-  function importMethod(useES, methodName, file) {
+  function importMethod(stateOpts, methodName, file) {
     if (!selectedMethods[methodName]) {
-      let path = resolveModule(useES, methodName)
+      let path = resolveModule(stateOpts, methodName)
 
       selectedMethods[methodName] = addDefault(file.path, path, {
         nameHint: methodName
