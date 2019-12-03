@@ -11,7 +11,7 @@ const esDirectory = `es/src`
 const beenExportedMethods = (function() {
   var collections // Methods list
 
-  return function(libName) {
+  return function({ lib: libName, path: esPath }) {
     if (collections) {
       return collections
     }
@@ -28,24 +28,26 @@ const beenExportedMethods = (function() {
     const directory = dir.slice(0, dir.lastIndexOf(libName) + libName.length)
 
     return (collections = fs
-      .readdirSync(path.join(directory, esDirectory))
+      .readdirSync(path.join(directory, esPath || esDirectory))
       .filter(name => path.extname(name) === extensions)
       .map(name => path.basename(name, extensions)))
   }
 })()
 
 module.exports = function resolveModule(config = {}, name) {
-  const { lib } = config
+  const { lib, path } = config
 
   if (!lib) {
     throw new Error(`Plugin ${packageJson.name} lib option is required.`)
   }
 
+  const methods = beenExportedMethods(config)
+
   if (~methods.indexOf(name)) {
-    return `${lib}/${esDirectory}/${name}`
+    return `${lib}/${path || esDirectory}/${name}`
   }
 
   throw new Error(
-    `Method '${name}' did not exist in ${lib}.\nPlease check it out your import statement.`
+    `Method '${name}' did not exist in ${lib}/${path}.\nPlease check it out your import statement.`
   )
 }
