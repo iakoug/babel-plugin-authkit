@@ -28,6 +28,12 @@ _a(_b);
 
 ```json
 {
-  "plugins": ["authkit"]
+  "plugins": ["authkit", {
+      // Package name loaded on demand
+      "lib": 'packageName',
+      // Single file directory to load on demand
+      // The default is `node_modules/packageName/es/src/*`
+      "esDirectory": "es/src",
+   }]
 }
 ```
